@@ -3,8 +3,14 @@
     <img alt="Vue logo" src="./assets/logo.png" />
     <navbar />
     <h1>Hi</h1>
-    <all-photos v-if="allPhotosView" :photos="photos" />
-    <single-photo v-if="!allPhotosView" />
+    <all-photos
+      v-if="allPhotosView"
+      :photos="photos"
+      :allPhotosView="allPhotosView"
+      :selectedPhoto="selectedPhoto"
+      v-on:switchView="switchView"
+    />
+    <single-photo v-if="!allPhotosView" :selectedPhoto="selectePhoto" />
   </div>
 </template>
 
@@ -24,8 +30,15 @@ export default {
   data: () => ({
     photos: [],
     allPhotosView: true,
-    selectePhoto: ""
+    selectedPhoto: ""
   }),
+  methods: {
+    switchView(photo) {
+      this.allPhotoView = false;
+      this.selectedPhoto = photo;
+      console.log(this.selectedPhoto);
+    }
+  },
   created: async function() {
     const photoObj = await listObjects();
     const photo64 = await Promise.all(
