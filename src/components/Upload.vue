@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <button @click="getInput">Photo Upload</button>
     <input id="input-file" type="file" class="file-upload" @change="saveFile($event)" />
   </div>
@@ -20,9 +20,12 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #input-file {
   position: absolute;
   left: -9999999999px;
+}
+.container {
+  margin-bottom: 20px;
 }
 </style>

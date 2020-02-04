@@ -2,7 +2,12 @@
   <div id="app">
     <navbar @all="all" @get-photo="getPhoto" />
     <upload @upload-photo="uploadPhoto" />
-    <all-photos v-if="allPhotoView" :photos="photos" @update-view="updateView" />
+    <img id="loading" v-if="loading" src="./33HU.gif" />
+    <all-photos
+      v-if="allPhotoView"
+      :photos="photos"
+      @update-view="updateView"
+    />
     <single-photo v-if="!allPhotoView" :selectedPhoto="selectedPhoto" />
   </div>
 </template>
@@ -13,6 +18,7 @@ import AllPhotos from "./components/AllPhotos";
 import SinglePhoto from "./components/SinglePhoto";
 import Upload from "./components/Upload";
 import { listObjects, getSingleObject, saveObject } from "../utils";
+// import {mapGetters}
 
 export default {
   name: "App",
@@ -25,7 +31,8 @@ export default {
   data: () => ({
     photos: [],
     allPhotoView: true,
-    selectedPhoto: ""
+    selectedPhoto: "",
+    loading: false
   }),
   methods: {
     updateView(photo) {
@@ -42,6 +49,7 @@ export default {
       this.allPhotoView = false;
     },
     async getPhoto() {
+      this.loading = true;
       console.log("getting photo");
       const photoObj = await listObjects();
       const photo64 = await Promise.all(
@@ -52,6 +60,7 @@ export default {
       this.photos = await photo64;
       this.allPhotoView = true;
       this.$forceUpdate();
+      this.loading = false;
     }
   },
   created: async function() {
@@ -63,5 +72,8 @@ export default {
 <style>
 #app {
   text-align: center;
+}
+#loading {
+  width: 10%;
 }
 </style>
