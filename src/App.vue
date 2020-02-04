@@ -1,16 +1,9 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <navbar />
-    <h1>Hi</h1>
-    <all-photos
-      v-if="allPhotosView"
-      :photos="photos"
-      :allPhotosView="allPhotosView"
-      :selectedPhoto="selectedPhoto"
-      v-on:switchView="switchView"
-    />
-    <single-photo v-if="!allPhotosView" :selectedPhoto="selectePhoto" />
+    <navbar @all="all" @get-photo="getPhoto" />
+    <upload @upload-photo="uploadPhoto" />
+    <all-photos v-if="allPhotoView" :photos="photos" @update-view="updateView" />
+    <single-photo v-if="!allPhotoView" :selectedPhoto="selectedPhoto" />
   </div>
 </template>
 
@@ -18,35 +11,51 @@
 import Navbar from "./components/Navbar";
 import AllPhotos from "./components/AllPhotos";
 import SinglePhoto from "./components/SinglePhoto";
-import { listObjects, getSingleObject } from "../utils";
+import Upload from "./components/Upload";
+import { listObjects, getSingleObject, saveObject } from "../utils";
 
 export default {
   name: "App",
   components: {
     Navbar,
     AllPhotos,
-    SinglePhoto
+    SinglePhoto,
+    Upload
   },
   data: () => ({
     photos: [],
-    allPhotosView: true,
+    allPhotoView: true,
     selectedPhoto: ""
   }),
   methods: {
-    switchView(photo) {
+    updateView(photo) {
       this.allPhotoView = false;
       this.selectedPhoto = photo;
-      console.log(this.selectedPhoto);
+    },
+    all() {
+      this.allPhotoView = true;
+      this.selectedPhoto = "";
+    },
+    async uploadPhoto(file) {
+      saveObject(file);
+      this.selectedPhoto = `${await getSingleObject(file.name)}`;
+      this.allPhotoView = false;
+    },
+    async getPhoto() {
+      console.log("getting photo");
+      const photoObj = await listObjects();
+      const photo64 = await Promise.all(
+        photoObj.map(async photo => {
+          return { key: photo.Key, url: await getSingleObject(photo.Key) };
+        })
+      );
+      this.photos = await photo64;
+      this.allPhotoView = true;
+      this.$forceUpdate();
     }
   },
   created: async function() {
-    const photoObj = await listObjects();
-    const photo64 = await Promise.all(
-      photoObj.map(async photo => {
-        return { key: photo.Key, url: await getSingleObject(photo.Key) };
-      })
-    );
-    this.photos = await photo64;
+    this.getPhoto();
   }
 };
 </script>
