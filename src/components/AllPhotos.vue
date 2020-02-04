@@ -4,7 +4,7 @@
       v-for="photo in photos"
       :src="'data:image/jpeg;base64,' + photo.url"
       :key="photo.key"
-      @click="$emit('update-view', photo.url)"
+      @click="update(photo.url)"
     />
   </div>
 </template>
@@ -12,7 +12,16 @@
 <script>
 export default {
   name: "allPhotos",
-  props: ["photos"]
+  computed: {
+    photos() {
+      return this.$store.photos;
+    }
+  },
+  methods: {
+    update(photo) {
+      this.$store.dispatch.updateView(photo);
+    }
+  }
 };
 </script>
 <style scoped>

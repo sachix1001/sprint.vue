@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-    <button @click="getInput">Photo Upload</button>
-    <input id="input-file" type="file" class="file-upload" @change="saveFile($event)" />
+    <button >Photo Upload</button>
+    <input id="input-file" type="file" class="file-upload" />
   </div>
 </template>
 
@@ -9,13 +9,13 @@
 export default {
   name: "Upload",
   methods: {
-    saveFile(event) {
-      const file = event.target.files[0];
-      this.$emit("upload-photo", file);
-    },
-    getInput() {
-      return document.getElementById("input-file").click();
-    }
+    // saveFile(event) {
+    //   const file = event.target.files[0];
+    //   this.$emit("upload-photo", file);
+    // },
+    // getInput() {
+    //   return document.getElementById("input-file").click();
+    // }
   }
 };
 </script>

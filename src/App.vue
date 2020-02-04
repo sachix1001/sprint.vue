@@ -1,14 +1,10 @@
 <template>
   <div id="app">
-    <navbar @all="all" @get-photo="getPhoto" />
-    <upload @upload-photo="uploadPhoto" />
-    <img id="loading" v-if="loading" src="./33HU.gif" />
-    <all-photos
-      v-if="allPhotoView"
-      :photos="photos"
-      @update-view="updateView"
-    />
-    <single-photo v-if="!allPhotoView" :selectedPhoto="selectedPhoto" />
+    <navbar />
+    <upload />
+    <img id="loading" src="./33HU.gif" />
+    <all-photos v-if="allPhotoView" />
+    <single-photo v-if="!allPhotoView" />
   </div>
 </template>
 
@@ -17,7 +13,7 @@ import Navbar from "./components/Navbar";
 import AllPhotos from "./components/AllPhotos";
 import SinglePhoto from "./components/SinglePhoto";
 import Upload from "./components/Upload";
-import { listObjects, getSingleObject, saveObject } from "../utils";
+// import { listObjects, getSingleObject, saveObject } from "../utils";
 // import {mapGetters}
 
 export default {
@@ -28,43 +24,48 @@ export default {
     SinglePhoto,
     Upload
   },
-  data: () => ({
-    photos: [],
-    allPhotoView: true,
-    selectedPhoto: "",
-    loading: false
-  }),
-  methods: {
-    updateView(photo) {
-      this.allPhotoView = false;
-      this.selectedPhoto = photo;
-    },
-    all() {
-      this.allPhotoView = true;
-      this.selectedPhoto = "";
-    },
-    async uploadPhoto(file) {
-      saveObject(file);
-      this.selectedPhoto = `${await getSingleObject(file.name)}`;
-      this.allPhotoView = false;
-    },
-    async getPhoto() {
-      this.loading = true;
-      console.log("getting photo");
-      const photoObj = await listObjects();
-      const photo64 = await Promise.all(
-        photoObj.map(async photo => {
-          return { key: photo.Key, url: await getSingleObject(photo.Key) };
-        })
-      );
-      this.photos = await photo64;
-      this.allPhotoView = true;
-      this.$forceUpdate();
-      this.loading = false;
+  computed: {
+    allPhotoView() {
+      return this.$store.state.allPhotoView;
     }
   },
+  // data: () => ({
+  //   photos: [],
+  //   allPhotoView: true,
+  //   selectedPhoto: "",
+  //   loading: false
+  // }),
+  // methods: {
+  //   updateView(photo) {
+  //     this.allPhotoView = false;
+  //     this.selectedPhoto = photo;
+  //   },
+  //   all() {
+  //     this.allPhotoView = true;
+  //     this.selectedPhoto = "";
+  //   },
+  //   async uploadPhoto(file) {
+  //     saveObject(file);
+  //     this.selectedPhoto = `${await getSingleObject(file.name)}`;
+  //     this.allPhotoView = false;
+  //   },
+  //   async getPhoto() {
+  //     this.loading = true;
+  //     console.log("getting photo");
+  //     const photoObj = await listObjects();
+  //     const photo64 = await Promise.all(
+  //       photoObj.map(async photo => {
+  //         return { key: photo.Key, url: await getSingleObject(photo.Key) };
+  //       })
+  //     );
+  //     this.photos = await photo64;
+  //     this.allPhotoView = true;
+  //     this.$forceUpdate();
+  //     this.loading = false;
+  //   }
+  // },
   created: async function() {
-    this.getPhoto();
+    this.$store.dispatch("getPhoto");
   }
 };
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div class="navbar">
-    <button class="switch-button" @click="$emit('all')">Switch View</button>
-    <button class="refresh-button" @click="$emit('get-photo')">Refresh</button>
+    <button class="switch-button" >Switch View</button>
+    <button class="refresh-button" >Refresh</button>
   </div>
 </template>
 
